@@ -2,10 +2,12 @@ package com.mascill.myapplication.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,36 +26,59 @@ fun SensorScreen(
     modifier: Modifier = Modifier,
     viewModel: SensorViewModel = hiltViewModel()
 ) {
-    val sensor by viewModel.accelerometer.collectAsStateWithLifecycle()
+    val accelerometer by viewModel.accelerometer.collectAsStateWithLifecycle()
+    val linearAcceleration by viewModel.linearAcceleration.collectAsStateWithLifecycle()
 
     SensorContent(
-        sensor = sensor,
+        accelerometer = accelerometer,
+        linearAcceleration = linearAcceleration,
         modifier = modifier
     )
 }
 
 @Composable
 private fun SensorContent(
-    sensor: AccelerometerData,
+    accelerometer: AccelerometerData,
+    linearAcceleration: AccelerometerData,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = "Accelerometer")
+        SensorSection(
+            title = "Accelerometer",
+            data = accelerometer
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.width(32.dp))
 
-        if (!sensor.isAvailable) {
-            Text(text = "Accelerometer tidak tersedia di perangkat ini")
+        SensorSection(
+            title = "Linear Acceleration",
+            data = linearAcceleration
+        )
+    }
+}
+
+@Composable
+private fun SensorSection(
+    title: String,
+    data: AccelerometerData
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = title)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (!data.isAvailable) {
+            Text(text = "$title tidak tersedia di perangkat ini")
         } else {
-            Text(text = "X: ${"%.2f".format(sensor.x)}")
-            Text(text = "Y: ${"%.2f".format(sensor.y)}")
-            Text(text = "Z: ${"%.2f".format(sensor.z)}")
+            Text(text = "X: ${"%.2f".format(data.x)}")
+            Text(text = "Y: ${"%.2f".format(data.y)}")
+            Text(text = "Z: ${"%.2f".format(data.z)}")
         }
     }
 }
@@ -62,7 +87,10 @@ private fun SensorContent(
 @Composable
 private fun SensorScreenPreview() {
     MyApplicationTheme {
-        SensorContent(sensor = AccelerometerData(1.2f, -0.5f, 9.8f))
+        SensorContent(
+            accelerometer = AccelerometerData(0.1f, 0.2f, 9.8f),
+            linearAcceleration = AccelerometerData(0.1f, 0.2f, 0.0f)
+        )
     }
 }
 
@@ -70,6 +98,9 @@ private fun SensorScreenPreview() {
 @Composable
 private fun SensorUnavailablePreview() {
     MyApplicationTheme {
-        SensorContent(sensor = AccelerometerData.Unavailable)
+        SensorContent(
+            accelerometer = AccelerometerData.Unavailable,
+            linearAcceleration = AccelerometerData.Unavailable
+        )
     }
 }

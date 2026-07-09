@@ -21,9 +21,14 @@ class SensorDataSource @Inject constructor(
     private val sensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-    fun accelerometer(): Flow<AccelerometerData> = callbackFlow {
+    fun accelerometer(): Flow<AccelerometerData> =
+        sensorFlow(Sensor.TYPE_ACCELEROMETER)
 
-        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    fun linearAcceleration(): Flow<AccelerometerData> =
+        sensorFlow(Sensor.TYPE_LINEAR_ACCELERATION)
+
+    private fun sensorFlow(sensorType: Int): Flow<AccelerometerData> = callbackFlow {
+        val sensor = sensorManager.getDefaultSensor(sensorType)
 
         if (sensor == null) {
             trySend(AccelerometerData.Unavailable)
@@ -32,9 +37,7 @@ class SensorDataSource @Inject constructor(
         }
 
         val listener = object : SensorEventListener {
-
             override fun onSensorChanged(event: SensorEvent) {
-
                 trySend(
                     AccelerometerData(
                         x = event.values[0],

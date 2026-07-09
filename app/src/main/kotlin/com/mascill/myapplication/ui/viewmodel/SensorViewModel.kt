@@ -22,4 +22,12 @@ class SensorViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = AccelerometerData.Unavailable
         )
+
+    val linearAcceleration: StateFlow<AccelerometerData> = repository
+        .linearAcceleration()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = AccelerometerData.Unavailable
+        )
 }

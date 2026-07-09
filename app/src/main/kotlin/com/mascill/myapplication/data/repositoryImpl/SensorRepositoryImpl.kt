@@ -15,4 +15,8 @@ class SensorRepositoryImpl @Inject constructor(
     override fun accelerometer(): Flow<AccelerometerData> {
         return dataSource.accelerometer()
     }
+
+    override fun linearAcceleration(): Flow<AccelerometerData> {
+        return dataSource.linearAcceleration()
+    }
 }

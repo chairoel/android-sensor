@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface SensorRepository {
 
     fun accelerometer(): Flow<AccelerometerData>
+
+    fun linearAcceleration(): Flow<AccelerometerData>
 }
