@@ -4,8 +4,11 @@ import com.mascill.myapplication.data.datasource.SensorDataSource
 import com.mascill.myapplication.data.model.AccelerometerData
 import com.mascill.myapplication.data.repository.SensorRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SensorRepositoryImpl(
+@Singleton
+class SensorRepositoryImpl @Inject constructor(
     private val dataSource: SensorDataSource
 ) : SensorRepository {
 

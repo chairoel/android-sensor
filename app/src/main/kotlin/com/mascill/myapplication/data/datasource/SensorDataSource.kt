@@ -6,12 +6,16 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.mascill.myapplication.data.model.AccelerometerData
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SensorDataSource(
-    context: Context
+@Singleton
+class SensorDataSource @Inject constructor(
+    @ApplicationContext context: Context
 ) {
 
     private val sensorManager =
@@ -22,6 +26,7 @@ class SensorDataSource(
         val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         if (sensor == null) {
+            trySend(AccelerometerData.Unavailable)
             close()
             return@callbackFlow
         }

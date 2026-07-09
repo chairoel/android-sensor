@@ -20,6 +20,6 @@ class SensorViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AccelerometerData(0f, 0f, 0f)
+            initialValue = AccelerometerData.Unavailable
         )
 }
