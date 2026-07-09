@@ -28,10 +28,12 @@ fun SensorScreen(
 ) {
     val accelerometer by viewModel.accelerometer.collectAsStateWithLifecycle()
     val linearAcceleration by viewModel.linearAcceleration.collectAsStateWithLifecycle()
+    val isMoving by viewModel.isMoving.collectAsStateWithLifecycle()
 
     SensorContent(
         accelerometer = accelerometer,
         linearAcceleration = linearAcceleration,
+        isMoving = isMoving,
         modifier = modifier
     )
 }
@@ -40,25 +42,47 @@ fun SensorScreen(
 private fun SensorContent(
     accelerometer: AccelerometerData,
     linearAcceleration: AccelerometerData,
+    isMoving: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SensorSection(
-            title = "Accelerometer",
-            data = accelerometer
-        )
+        MotionStatusSection(isMoving = isMoving)
 
-        Spacer(modifier = Modifier.width(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        SensorSection(
-            title = "Linear Acceleration",
-            data = linearAcceleration
+        Row(
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            SensorSection(
+                title = "Accelerometer",
+                data = accelerometer
+            )
+
+            Spacer(modifier = Modifier.width(32.dp))
+
+            SensorSection(
+                title = "Linear Acceleration",
+                data = linearAcceleration
+            )
+        }
+    }
+}
+
+@Composable
+private fun MotionStatusSection(isMoving: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "Motion Detector")
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = if (isMoving) "Status: Bergerak" else "Status: Diam"
         )
     }
 }
@@ -89,7 +113,20 @@ private fun SensorScreenPreview() {
     MyApplicationTheme {
         SensorContent(
             accelerometer = AccelerometerData(0.1f, 0.2f, 9.8f),
-            linearAcceleration = AccelerometerData(0.1f, 0.2f, 0.0f)
+            linearAcceleration = AccelerometerData(0.1f, 0.2f, 0.0f),
+            isMoving = false
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SensorMovingPreview() {
+    MyApplicationTheme {
+        SensorContent(
+            accelerometer = AccelerometerData(1.5f, 2.0f, 10.2f),
+            linearAcceleration = AccelerometerData(0.8f, 1.2f, 0.5f),
+            isMoving = true
         )
     }
 }
@@ -100,7 +137,8 @@ private fun SensorUnavailablePreview() {
     MyApplicationTheme {
         SensorContent(
             accelerometer = AccelerometerData.Unavailable,
-            linearAcceleration = AccelerometerData.Unavailable
+            linearAcceleration = AccelerometerData.Unavailable,
+            isMoving = false
         )
     }
 }
